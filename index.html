@@ -1,0 +1,351 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Открытая библиотека классических нот. Произведения Баха, Моцарта, Бетховена и других композиторов.">
+<title>NOTA — Открытая нотная библиотека</title>
+<style>
+:root {
+  --bg: #f7f8fa;
+  --surface: #ffffff;
+  --text: #17191e;
+  --muted: #777e89;
+  --line: #e7e9ed;
+  --accent: #315ce8;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+header {
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 7%;
+  background: white;
+  border-bottom: 1px solid var(--line);
+}
+.logo { font-size: 25px; font-weight: 850; letter-spacing: -2px; }
+.logo span { color: var(--accent); }
+nav { display: flex; gap: 28px; }
+nav a { text-decoration: none; color: var(--muted); font-size: 14px; }
+nav a:hover { color: var(--accent); }
+.hero {
+  padding: 85px 7% 65px;
+  background: white;
+}
+.eyebrow {
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 11px;
+  font-weight: 800;
+}
+h1 {
+  font-size: clamp(42px, 7vw, 76px);
+  letter-spacing: -4px;
+  line-height: 1.04;
+  max-width: 760px;
+  margin: 20px 0;
+}
+.hero p {
+  color: var(--muted);
+  max-width: 550px;
+  line-height: 1.8;
+  font-size: 17px;
+}
+.search {
+  display: flex;
+  max-width: 570px;
+  margin-top: 32px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.search input {
+  flex: 1;
+  min-width: 0;
+  padding: 17px;
+  border: none;
+  outline: none;
+  font-size: 15px;
+}
+.search button, .primary {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 0 23px;
+  cursor: pointer;
+  font-weight: 650;
+}
+main { padding: 65px 7%; }
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 28px;
+}
+h2 { font-size: 30px; letter-spacing: -1px; margin: 0; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filter {
+  border: 1px solid var(--line);
+  background: white;
+  border-radius: 30px;
+  padding: 9px 17px;
+  cursor: pointer;
+}
+.filter.active {
+  background: var(--text);
+  color: white;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+.card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  overflow: hidden;
+  transition: transform .2s, box-shadow .2s;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 35px #17213a12;
+}
+.sheet {
+  height: 205px;
+  background: #fff;
+  margin: 12px;
+  border: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.sheet svg { width: 94%; height: 90%; }
+.card-content { padding: 10px 20px 22px; }
+.category {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+  font-weight: 750;
+}
+.card h3 { font-size: 21px; margin: 10px 0 5px; }
+.composer { color: var(--muted); font-size: 14px; }
+.card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 23px;
+}
+.open {
+  color: var(--accent);
+  background: #eff3ff;
+  padding: 10px 15px;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+}
+.status { color: #29966a; font-size: 11px; }
+.empty { color: var(--muted); padding: 35px 0; }
+.about {
+  margin-top: 85px;
+  background: #17191e;
+  color: white;
+  padding: 55px;
+  border-radius: 16px;
+}
+.about p { color: #b5bac4; line-height: 1.8; max-width: 650px; }
+footer {
+  padding: 35px 7%;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+}
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #0009;
+  z-index: 10;
+  padding: 20px;
+  overflow: auto;
+}
+.modal.show { display: flex; align-items: center; justify-content: center; }
+.modal-box {
+  width: min(850px, 100%);
+  background: white;
+  padding: 30px;
+  border-radius: 14px;
+  max-height: 90vh;
+  overflow: auto;
+}
+.modal-head { display:flex; justify-content:space-between; align-items:center; }
+.close { border:0; background:#eee; border-radius:50%; width:36px;height:36px;cursor:pointer; }
+.large-sheet { margin-top:20px; border:1px solid var(--line); padding:20px; overflow-x:auto; }
+.large-sheet svg { min-width:500px; width:100%; }
+@media(max-width:850px) {
+ .grid { grid-template-columns: repeat(2,1fr); }
+ nav { gap:12px; }
+}
+@media(max-width:580px) {
+ header { padding:0 5%; }
+ nav a:not(:first-child) { display:none; }
+ .hero { padding:65px 6%; }
+ main { padding:45px 6%; }
+ h1 { letter-spacing:-2px; }
+ .grid { grid-template-columns:1fr; }
+ .section-head { align-items:flex-start; flex-direction:column; }
+ .about { padding:30px 24px; }
+ .search button { padding:0 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">NOTA<span>.</span></div>
+  <nav>
+    <a href="#catalog">Каталог</a>
+    <a href="#about">О библиотеке</a>
+    <a href="#footer">Контакты</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Открытая музыкальная библиотека</div>
+  <h1>Великая музыка.<br>Свободные ноты.</h1>
+  <p>Коллекция классических музыкальных произведений, доступных для изучения, исполнения и свободного распространения в соответствии с условиями общественного достояния.</p>
+  <div class="search">
+    <input id="search" placeholder="Найти композитора или произведение...">
+    <button onclick="render()">Найти</button>
+  </div>
+</section>
+
+<main id="catalog">
+  <div class="section-head">
+    <h2>Каталог произведений</h2>
+    <div class="filters">
+      <button class="filter active" onclick="setFilter('Все',this)">Все</button>
+      <button class="filter" onclick="setFilter('Бах',this)">Бах</button>
+      <button class="filter" onclick="setFilter('Моцарт',this)">Моцарт</button>
+      <button class="filter" onclick="setFilter('Бетховен',this)">Бетховен</button>
+      <button class="filter" onclick="setFilter('Шопен',this)">Шопен</button>
+    </div>
+  </div>
+  <div class="grid" id="grid"></div>
+
+  <section class="about" id="about">
+    <div class="eyebrow">О проекте</div>
+    <h2>Музыка принадлежит всем.</h2>
+    <p>NOTA — независимая библиотека классической музыки. Наша цель — сделать музыкальное наследие доступным каждому: музыкантам, преподавателям, студентам и всем любителям музыки.</p>
+    <p>Мы стремимся использовать нотные материалы, которые находятся в общественном достоянии, и отдельно проверять права на каждое публикуемое издание.</p>
+  </section>
+</main>
+
+<footer id="footer">
+  NOTA. Открытая нотная библиотека © 2026
+  <br><br>Классическое музыкальное наследие для всех.
+</footer>
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+ <div class="modal-box">
+  <div class="modal-head">
+   <div><div class="eyebrow">Нотная партитура</div><h2 id="modalTitle"></h2></div>
+   <button class="close" onclick="closeModal()">✕</button>
+  </div>
+  <p id="modalComposer"></p>
+  <div class="large-sheet" id="modalSheet"></div>
+  <p style="color:#777;font-size:13px">Нотный фрагмент создан для демонстрации. Для публикации полного произведения используйте проверенное издание из общественного достояния.</p>
+ </div>
+</div>
+
+<script>
+const works = [
+ {id:1,title:"Прелюдия до мажор",composer:"Бах",full:"Иоганн Себастьян Бах",category:"Клавир",key:"C major",notes:[["C4","E4","G4","C5","E5"],["C4","E4","G4","C5","E5"],["C4","D4","F4","B4","D5"]]},
+ {id:2,title:"Ода к радости",composer:"Бетховен",full:"Людвиг ван Бетховен",category:"Симфония",key:"D major",notes:[["D4","D4","E4","F4"],["F4","E4","D4","C4"],["B3","B3","C4","D4"]]},
+ {id:3,title:"Турецкий марш",composer:"Моцарт",full:"Вольфганг Амадей Моцарт",category:"Фортепиано",key:"A minor",notes:[["A4","B4","C5","D5"],["E5","F5","E5","D5"],["C5","B4","A4","G4"]]},
+ {id:4,title:"Прелюдия ми минор",composer:"Шопен",full:"Фредерик Шопен",category:"Фортепиано",key:"E minor",notes:[["E4","G4","B4","E5"],["D4","F4","A4","D5"],["C4","E4","G4","C5"]]},
+ {id:5,title:"Весна",composer:"Вивальди",full:"Антонио Вивальди",category:"Скрипка",key:"E major",notes:[["E5","E5","E5","D5"],["C5","B4","A4","G4"],["F5","E5","D5","C5"]]},
+ {id:6,title:"Лунная соната",composer:"Бетховен",full:"Людвиг ван Бетховен",category:"Фортепиано",key:"C# minor",notes:[["G#4","C#5","E5"],["G#4","C#5","E5"],["A4","C#5","F#5"]]}
+];
+
+let filter = "Все";
+
+function makeSheet(notes) {
+ const y = n => {
+   const m = n.match(/^([A-G])(#?)(\d)$/);
+   const steps = {C:0,D:1,E:2,F:3,G:4,A:5,B:6};
+   return 145 - ((+m[3]-4)*7 + steps[m[1]] - 2)*7;
+ };
+ let svg = `<svg viewBox="0 0 580 190" xmlns="http://www.w3.org/2000/svg">
+ <rect width="580" height="190" fill="white"/>
+ <text x="20" y="23" font-size="10" fill="#777">NOTA · PUBLIC DOMAIN COLLECTION</text>`;
+ for(let i=0;i<5;i++){
+   svg += `<line x1="30" y1="${90+i*12}" x2="550" y2="${90+i*12}" stroke="#222" stroke-width="1"/>`;
+ }
+ svg += `<text x="35" y="139" font-size="65" font-family="serif">𝄞</text>`;
+ notes.flat().forEach((n,i)=>{
+   const x=120+i*36, yy=y(n);
+   svg += `<ellipse cx="${x}" cy="${yy}" rx="7" ry="4.5" transform="rotate(-20 ${x} ${yy})" fill="#17191e"/>`;
+   svg += `<line x1="${x+6}" y1="${yy}" x2="${x+6}" y2="${yy-35}" stroke="#17191e" stroke-width="1.5"/>`;
+   if(n.includes("#")) svg += `<text x="${x-16}" y="${yy+5}" font-size="13">♯</text>`;
+ });
+ svg += `</svg>`;
+ return svg;
+}
+
+function render() {
+ const q = document.getElementById('search').value.toLowerCase();
+ const results = works.filter(w =>
+   (filter==="Все" || w.composer===filter) &&
+   (w.title+" "+w.composer+" "+w.full).toLowerCase().includes(q)
+ );
+ document.getElementById('grid').innerHTML = results.length ? results.map(w=>`
+ <article class="card">
+   <div class="sheet">${makeSheet(w.notes)}</div>
+   <div class="card-content">
+     <div class="category">${w.category} · ${w.key}</div>
+     <h3>${w.title}</h3>
+     <div class="composer">${w.full}</div>
+     <div class="card-bottom">
+       <span class="status">● Общественное достояние*</span>
+       <button class="open" onclick="openWork(${w.id})">Открыть ноты ↗</button>
+     </div>
+   </div>
+ </article>`).join('') : '<div class="empty">Произведения не найдены.</div>';
+}
+
+function setFilter(value,button) {
+ filter=value;
+ document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));
+ button.classList.add('active');
+ render();
+}
+
+function openWork(id) {
+ const w=works.find(x=>x.id===id);
+ document.getElementById('modalTitle').textContent=w.title;
+ document.getElementById('modalComposer').textContent=w.full+" · "+w.category+" · "+w.key;
+ document.getElementById('modalSheet').innerHTML=makeSheet(w.notes);
+ document.getElementById('modal').classList.add('show');
+}
+function closeModal() {
+ document.getElementById('modal').classList.remove('show');
+}
+document.getElementById('search').addEventListener('input',render);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+render();
+</script>
+</body>
+</html>
